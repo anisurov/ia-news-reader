@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Interactive News Reader</string>
+    <string name="tap_on_mic">Tap on mic to start</string>
+    <string name="welcome_bn">নিউজ রিডারে স্বাগতম</string>
+    <string name="select_lang">আপনি,কোন্ ভাষায় খবর শুনতে চান?</string>
+    <string name="speech_not_supported">Speech Recognition Support Not Available</string>
+    <string name="please_select_newspaper_bn">আপনি কোন্ সংবাদপত্র পড়তে চান?</string>
+    <string name="please_select_newspaper">Which newspaper you like to read?</string>
+    <string name="title_activity_news">News</string>
+    <string name="please_select_cat_bn">আপনি, কোন্ ধরনের খবর শুনতে চান?</string>
+    <string name="please_select_cat">which type of news,you want to listen ?</string>
+    <string name="start_read_bn">আমি কি পড়তে শুরু করব?</string>
+    <string name="start_read">will i start reading?</string>
+    <string name="try_again_bn">আবার চেষ্টা করুন</string>
+    <string name="try_again">Try again</string>
+    <string name="news_list_ended_bn">এই ক্যাটাগরির সংবাদ পড়া শেষ হয়েছে</string>
+    <string name="news_list_ended">News of this category finished reading</string>
+</resources>
