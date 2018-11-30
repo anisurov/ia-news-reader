@@ -15,4 +15,6 @@
     <string name="try_again">Try again</string>
     <string name="news_list_ended_bn">এই ক্যাটাগরির সংবাদ পড়া শেষ হয়েছে</string>
     <string name="news_list_ended">News of this category finished reading</string>
+    <string name="not_found_bn">পাওয়া যায়নি</string>
+    <string name="not_found">is not found</string>
 </resources>

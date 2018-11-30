@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private String resultString;
     private int promptChecker;
     private String select_newspaper;
+    private String try_again;
+    private String not_found;
+    private CountDownTimer countDownTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
         initializeTTS();
 
         lang = "bn_BD";
-     //   welcomeCheck = 0;
-
+        select_newspaper = getString(R.string.please_select_newspaper_bn);
+        try_again = getString(R.string.try_again_bn);
+        not_found = getString(R.string.not_found_bn);
         welcomeString = getString(R.string.welcome_bn);
         selectLangString = getString(R.string.select_lang);
 
@@ -60,9 +64,16 @@ public class MainActivity extends AppCompatActivity {
                 langCheck =0;
                 promptChecker = 0;
 
+                if (countDownTimer!=null){
+                    countDownTimer.cancel();
+                }
+                if(mTts.isSpeaking()){
+                    mTts.stop();
+                }
+
                 mTts.speak(selectLangString,TextToSpeech.QUEUE_FLUSH,null);
 
-                new CountDownTimer(4000,1000){
+                countDownTimer = new CountDownTimer((100*selectLangString.length())+100,1000){
                     @Override
                     public void onTick(long l){
 
@@ -111,9 +122,14 @@ public class MainActivity extends AppCompatActivity {
                     selectLangString);
             try {
                 startActivityForResult(promptIntent, REQ_CODE_SPEECH_INPUT);
-                new CountDownTimer(6000, 1000) {
 
-
+                if (countDownTimer!=null){
+                    countDownTimer.cancel();
+                }
+                if(mTts.isSpeaking()){
+                    mTts.stop();
+                }
+                countDownTimer=new CountDownTimer(6000, 1000) {
 
                     @Override
                     public void onTick(long l) {
@@ -131,10 +147,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }else {
             promptIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                    "please, tell newspaper name");
+                    select_newspaper);
             try {
                 startActivityForResult(promptIntent, REQ_CODE_SPEECH_INPUT);
-                new CountDownTimer(6000, 1000) {
+
+                if (countDownTimer!=null){
+                    countDownTimer.cancel();
+                }
+                if(mTts.isSpeaking()){
+                    mTts.stop();
+                }
+                countDownTimer =new CountDownTimer(6000, 1000) {
 
 
 
@@ -203,14 +226,25 @@ public class MainActivity extends AppCompatActivity {
 
                             if (lang.contains("bn_BD")){
                                 select_newspaper = getString(R.string.please_select_newspaper_bn);
+                                try_again = getString(R.string.try_again_bn);
+                                not_found = getString(R.string.not_found_bn);
                             }else {
                                 select_newspaper = getString(R.string.please_select_newspaper);
+                                try_again = getString(R.string.try_again);
+                                not_found = getString(R.string.not_found);
                                 mTts.setLanguage(new Locale("en_US"));
                             }
 
-                            mTts.speak(select_newspaper, TextToSpeech.QUEUE_FLUSH, null);
 
-                            new CountDownTimer(2100, 1000) {
+
+                            if (countDownTimer!=null){
+                                countDownTimer.cancel();
+                            }
+                            if(mTts.isSpeaking()){
+                                mTts.stop();
+                            }
+                            mTts.speak(select_newspaper, TextToSpeech.QUEUE_FLUSH, null);
+                            countDownTimer = new CountDownTimer((100*select_newspaper.length())+100, 1000) {
 
                                 @Override
                                 public void onTick(long l) {
@@ -235,9 +269,15 @@ public class MainActivity extends AppCompatActivity {
 
                                 startActivity(intent);
                             } else {
+                                if (countDownTimer!=null){
+                                    countDownTimer.cancel();
+                                }
+                                if(mTts.isSpeaking()){
+                                    mTts.stop();
+                                }
 
-                                mTts.speak(resultString + " is not found", TextToSpeech.QUEUE_FLUSH, null);
-                                new CountDownTimer(2100, 1000) {
+                                mTts.speak(resultString + not_found, TextToSpeech.QUEUE_FLUSH, null);
+                                countDownTimer =new CountDownTimer(100*(resultString.length()+not_found.length())+120, 1000) {
 
                                     @Override
                                     public void onTick(long l) {
@@ -259,9 +299,14 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.i(TAG, "timedOut: " + ERROR_SPEECH_TIMEOUT + " A: " + ERROR_AUDIO+" LANG :"+langCheck+" P :"+promptChecker+" R: "+RESULT_OK);
                     if(ERROR_SPEECH_TIMEOUT==6){
-
-                        mTts.speak("Speech recognizer timed out. Try again", TextToSpeech.QUEUE_FLUSH, null);
-                        new CountDownTimer(2800, 1000) {
+                        if (countDownTimer!=null){
+                            countDownTimer.cancel();
+                        }
+                        if(mTts.isSpeaking()){
+                            mTts.stop();
+                        }
+                        mTts.speak(try_again, TextToSpeech.QUEUE_FLUSH, null);
+                        countDownTimer = new CountDownTimer(100*try_again.length()+100, 1000) {
 
                             @Override
                             public void onTick(long l) {

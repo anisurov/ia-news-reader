@@ -72,6 +72,7 @@ public class NewsActivity extends AppCompatActivity {
     private int news_no;
     private ArrayList<NewsDetails> newsDetailsArrayList;
     private CountDownTimer countDownTimer = null;
+    private String not_found;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +95,13 @@ public class NewsActivity extends AppCompatActivity {
             start_reading = getString(R.string.start_read_bn);
             try_again = getString(R.string.try_again_bn);
             news_list_ended = getString(R.string.news_list_ended_bn);
+            not_found = getString(R.string.not_found_bn);
         }else {
             select_news_cat = getString(R.string.please_select_cat);
             start_reading = getString(R.string.start_read);
             try_again = getString(R.string.try_again);
             news_list_ended = getString(R.string.news_list_ended);
+            not_found = getString(R.string.not_found);
         }
         dbOpenHelper = new DBOpenHelper(NewsActivity.this);
         siteArrayList = dbOpenHelper.getNewsSite(homeUrl);
@@ -249,7 +252,7 @@ public class NewsActivity extends AppCompatActivity {
                 start_reading);
         }else {
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                    "please, select news category");
+                    select_news_cat);
         }
 
         try {
@@ -303,14 +306,14 @@ public class NewsActivity extends AppCompatActivity {
                         else if(inCategory&&autoMode)
                         {
                             Log.d(TAG, "onActivityResult: inac"+newsDetailsArrayList.size());
-                            if (speechResString.contains("read")||speechResString.contains("more")||speechResString.contains("p")||speechResString.contains("for"))
+                            if (speechResString.contains("read")||speechResString.contains("more")||speechResString.contains("poro")||speechResString.contains("for"))
                             {
                                 this.mUrl = newsDetailsArrayList.get(news_no).link;
                                 loadDataToWebView();
                             }
                             else if (speechResString.contains("next")||speechResString.contains("ne"))
                             {
-                                if(news_no<newsDetailsArrayList.size()){
+                                if(news_no<newsDetailsArrayList.size()-1){
                                     news_no++;
                                     selectNews();
                                 }else {
@@ -324,6 +327,8 @@ public class NewsActivity extends AppCompatActivity {
                                     mTts.speak(news_list_ended, TextToSpeech.QUEUE_FLUSH, null);
                                     inCategory = false;
                                     pageCountChecker = 0;
+                                    news_no = 0;
+                                    newsDetailsArrayList.clear();
 
                                   countDownTimer =  new CountDownTimer((100*news_list_ended.length())+100, 1000) {
 
@@ -340,6 +345,7 @@ public class NewsActivity extends AppCompatActivity {
                             }else if (speechResString.contains("prev")||speechResString.contains("pra"))
                             {
                                 if(news_no>0){
+                                    Log.d(TAG, "onActivityResult: prev"+news_no);
                                     news_no--;
                                     selectNews();
                                 }else {
@@ -353,6 +359,8 @@ public class NewsActivity extends AppCompatActivity {
                                     mTts.speak(news_list_ended, TextToSpeech.QUEUE_FLUSH, null);
                                     inCategory = false;
                                     pageCountChecker = 0;
+                                    news_no = 0;
+                                    newsDetailsArrayList.clear();
 
                                    countDownTimer = new CountDownTimer((100*news_list_ended.length())+100, 1000) {
 
@@ -446,9 +454,9 @@ public class NewsActivity extends AppCompatActivity {
                                 if(mTts.isSpeaking()){
                                     mTts.stop();
                                 }
-
-                                mTts.speak(speechResString + " is not found", TextToSpeech.QUEUE_FLUSH, null);
-                               countDownTimer = new CountDownTimer(100*(speechResString.length()+11)+100, 1000) {
+                                mTts.setLanguage(new Locale(user_lang));
+                                mTts.speak(speechResString + not_found, TextToSpeech.QUEUE_FLUSH, null);
+                               countDownTimer = new CountDownTimer(100*(speechResString.length()+not_found.length())+100, 1000) {
 
                                     @Override
                                     public void onTick(long l) {
@@ -471,8 +479,8 @@ public class NewsActivity extends AppCompatActivity {
                     if(mTts.isSpeaking()){
                         mTts.stop();
                     }
-                    mTts.speak("Speech recognizer timed out. Try again", TextToSpeech.QUEUE_FLUSH, null);
-                    countDownTimer = new CountDownTimer(2800, 1000) {
+                    mTts.speak(try_again, TextToSpeech.QUEUE_FLUSH, null);
+                    countDownTimer = new CountDownTimer((100*try_again.length())+100, 1000) {
 
                         @Override
                         public void onTick(long l) {
@@ -505,7 +513,7 @@ public class NewsActivity extends AppCompatActivity {
 
     public void selectNews() {
         mTts.setLanguage(new Locale(doc_lang));
-        Log.d(TAG, "selectNews: "+news_no);
+        Log.d(TAG, "selectNews: "+news_no+" L:"+newsDetailsArrayList.size());
         if (countDownTimer!=null){
             countDownTimer.cancel();
         }
@@ -549,6 +557,7 @@ public class NewsActivity extends AppCompatActivity {
                 else
                     this.mUrl = intl;
                 inCategory=true;
+                pageCountChecker=1;
                 return true;
 
             }
@@ -558,6 +567,7 @@ public class NewsActivity extends AppCompatActivity {
                 else
                     this.mUrl = editor;
                 inCategory=true;
+                pageCountChecker=1;
                 return true;
             }
             case "sports":{
@@ -566,6 +576,7 @@ public class NewsActivity extends AppCompatActivity {
                 else
                     this.mUrl = sprts;
                 inCategory=true;
+                pageCountChecker=1;
                 return true;
             }case "entertainment":{
                 if (entrmnt.isEmpty())
@@ -573,6 +584,7 @@ public class NewsActivity extends AppCompatActivity {
                 else
                     this.mUrl = entrmnt;
                 inCategory=true;
+                pageCountChecker=1;
                 return true;
             }
             default:
